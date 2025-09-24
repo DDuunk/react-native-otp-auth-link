@@ -1,0 +1,40 @@
+{
+  "name": "react-native-otp-auth-link",
+  "version": "0.0.1",
+  "author": "Dylan Duunk <dylanduunk@live.nl>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DDuunk/react-native-otp-auth-link.git"
+  },
+  "main": "dist/index.js",
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "bugs": {
+    "url": "https://github.com/DDuunk/react-native-otp-auth-link/issues"
+  },
+  "description": "Open otpauth:// in chosen password manager (iOS/Android)",
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "homepage": "https://github.com/DDuunk/react-native-otp-auth-link#readme",
+  "keywords": [
+    "react-native",
+    "otp",
+    "otpauth",
+    "password-manager",
+    "ios",
+    "android",
+    "auth",
+    "totp"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "sideEffects": false,
+  "types": "dist/index.d.ts"
+}
