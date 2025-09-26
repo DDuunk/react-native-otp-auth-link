@@ -14,26 +14,48 @@ export type Options = {
 };
 
 const defaultManagers: OtpManager[] = [
+  // Apple Passwords (built-in)
+  {
+    name: "Passwords",
+    schemeProbe: "otpauth://", // just to indicate usage
+    buildUrl: (url) => url // open otpauth:// directly
+  },
   // 1Password
   {
     name: "1Password",
     schemeProbe: "onepassword://",
-    // docs: https://developer.1password.com/docs/mobile/ios/ (deeplinks vary by version)
-    buildUrl: (url) => `onepassword://add-item?otp=${encodeURIComponent(url)}`
+    buildUrl: (url) => `onepassword://${encodeURIComponent(url)}`
   },
   // Bitwarden
   {
     name: "Bitwarden",
     schemeProbe: "bitwarden://",
-    // community-documented
-    buildUrl: (url) => `bitwarden://otp/add?data=${encodeURIComponent(url)}`
+    buildUrl: (url) => `bitwarden://${encodeURIComponent(url)}`
   },
   // Authy
   {
     name: "Authy",
     schemeProbe: "authy://",
-    buildUrl: (url) => `authy://otp/add?url=${encodeURIComponent(url)}`
-  }
+    buildUrl: (url) => `authy://${encodeURIComponent(url)}`
+  },
+  // LastPass
+  {
+    name: "LastPass",
+    schemeProbe: "lastpass://",
+    buildUrl: (url) => `lastpass://${encodeURIComponent(url)}`
+  },
+  // Dashlane
+  {
+    name: "Dashlane",
+    schemeProbe: "dashlane://",
+    buildUrl: (url) => `dashlane://${encodeURIComponent(url)}`
+  },
+  // Microsoft Authenticator
+  {
+    name: "Authenticator",
+    schemeProbe: "msauthv2://",
+    buildUrl: (url) => `msauthv2://${encodeURIComponent(url)}`
+  },
 ];
 
 export async function getAvailableManagers(opts?: Options): Promise<OtpManager[]> {

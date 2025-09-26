@@ -16,8 +16,7 @@
   },
   "description": "Open otpauth:// in chosen password manager (iOS/Android)",
   "files": [
-    "dist",
-    "bin"
+    "dist"
   ],
   "homepage": "https://github.com/DDuunk/react-native-otp-auth-link#readme",
   "keywords": [
