@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
@@ -26,9 +26,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+          registry-url: https://registry.npmjs.org/
       - run: bun install --frozen-lockfile
       - name: Download dist
         uses: actions/download-artifact@v4
