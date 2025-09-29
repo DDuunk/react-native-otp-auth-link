@@ -76,8 +76,16 @@ export async function getAvailableManagers(opts?: Options): Promise<OtpManager[]
  */
 export async function openOtpManager(url: string, opts?: Options) {
   if (Platform.OS === "android") {
-    // On Android, just open the otpauth:// url directly and let the system handle it
-    await Linking.openURL(url);
+    const canOpen = await Linking.canOpenURL(url).catch(() => false);
+    if (canOpen) {
+      // On Android, just open the otpauth:// url directly and let the system handle it
+      await Linking.openURL(url);
+    } else {
+      // Google Authenticator Play Store URL
+      const playStoreUrl =
+        "https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2";
+      await Linking.openURL(playStoreUrl);
+    }
     return;
   }
 
