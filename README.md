@@ -1,5 +1,8 @@
 # react-native-otp-auth-link
 
+> **_NOTE:_**  This library is still in early development. Please open an issue
+if you encounter any problems or have suggestions.
+
 A lightweight React Native module that helps you route `otpauth://` links to
 third-party password managers such as 1Password, Bitwarden, Authy, LastPass,
 Dashlane, Microsoft Authenticator, or fall back to Apple Passwords on iOS.
@@ -103,4 +106,8 @@ await openOtpManager(url);
 - On iOS: if multiple managers are available, an ActionSheet is shown.
 - On Android: the system chooser handles the `otpauth://` link.
 
+# Contributing
+Contributions are welcome! Please open an issue or submit a pull request.
 
+# License
+MIT © [Dylan Duunk](https://github.com/DDuunk)
