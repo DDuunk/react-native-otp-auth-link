@@ -1,44 +1,46 @@
 name: Bun Package
+
 on:
   push:
     branches:
       - main
       - next
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+      - run: bun audit signatures
+      - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
-  publish:
+
+  release:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - name: Download dist
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
