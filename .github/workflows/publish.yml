@@ -19,6 +19,7 @@ jobs:
           path: dist
 
   publish-gpr:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
