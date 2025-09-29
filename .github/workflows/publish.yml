@@ -3,18 +3,7 @@ on:
   release:
     types: [created]
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-      - run: bun install --frozen-lockfile
-      - run: bun test
-
   publish-gpr:
-    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,7 +14,10 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - run: bun run build
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
       - name: Publish package
         run: npm publish
         env:

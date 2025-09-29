@@ -78,7 +78,7 @@ export default {
   },
   android: {
     query: [
-      { scheme: "msauthenticator" },
+      { scheme: "msauthv2" },
       { scheme: "onepassword" },
       { scheme: "lastpass" },
       { scheme: "dashlane" },
