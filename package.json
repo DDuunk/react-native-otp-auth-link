@@ -4,7 +4,7 @@
   "author": "Dylan Duunk <dylanduunk@live.nl>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DDuunk/react-native-otp-auth-link.git"
+    "url": "git+https://github.com/DDuunk/react-native-otp-auth-link.git"
   },
   "main": "dist/index.js",
   "peerDependencies": {

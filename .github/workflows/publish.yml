@@ -18,7 +18,7 @@ jobs:
           name: dist
           path: dist
 
-  publish-gpr:
+  publish:
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -34,7 +34,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
-      - name: Publish package
-        run: npm publish
+          path: dist
+      - name: Publish to GitHub Packages
+        run: npm publish --access public --registry https://npm.pkg.github.com/
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to npm
+        run: npm publish --access public --registry https://registry.npmjs.org/
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
