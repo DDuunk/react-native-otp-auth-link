@@ -11,7 +11,7 @@ type Props = {
 // @NOTE: This modal is only used on Android, as iOS uses ActionSheetIOS.
 export function ManagerPicker({ url, managers, visible, onClose }: Props) {
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View
         style={{
           flex: 1,

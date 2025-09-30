@@ -7,6 +7,10 @@
     "url": "git+https://github.com/DDuunk/react-native-otp-auth-link.git"
   },
   "main": "dist/index.js",
+  "devDependencies": {
+    "@types/react": "^19.1.16",
+    "semantic-release": "^24.2.9"
+  },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
@@ -35,9 +39,5 @@
     "prepublishOnly": "npm run build"
   },
   "sideEffects": false,
-  "types": "dist/index.d.ts",
-  "devDependencies": {
-    "@types/react": "^19.1.16",
-    "semantic-release": "^24.2.9"
-  }
+  "types": "dist/index.d.ts"
 }

@@ -46,12 +46,34 @@ Add the following block to your `android/app/src/main/AndroidManifest.xml`:
 ```xml
 <manifest ...>
   <queries>
-    <package android:name="com.agilebits.onepassword" />
-    <package android:name="com.x8bit.bitwarden" />
-    <package android:name="com.authy.authy" />
-    <package android:name="com.lastpass.lpandroid" />
-    <package android:name="com.dashlane" />
-    <package android:name="com.azure.authenticator" />
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="onepassword" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="bitwarden" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="authy" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="lastpass" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="dashlane" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="msauthv2" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="otpauth" />
+    </intent>
   </queries>
 
   <application ...>
@@ -62,7 +84,41 @@ Add the following block to your `android/app/src/main/AndroidManifest.xml`:
 
 ## Expo
 
-If you use Expo, add them in `app.config.js`:
+If you use Expo, you'll first need to crate a custom config plugin to modify the AndroidManifest.xml.
+
+```js
+// plugins/withAndroidPlugin.ts
+import { withAndroidManifest, ConfigPlugin } from "expo/config-plugins";
+
+const withAndroidPlugin: ConfigPlugin = (config) => {
+  return withAndroidManifest(config, (config) => {
+    const schemes = [
+      "msauthenticator",
+      "onepassword",
+      "lastpass",
+      "dashlane",
+      "authy",
+      "otpauth",
+    ];
+
+    config.modResults.manifest.queries = [
+      {
+        intent: schemes.map((scheme) => ({
+          action: [{ $: { "android:name": "android.intent.action.VIEW" } }],
+          data: [{ $: { "android:scheme": scheme } }],
+        })),
+      },
+    ];
+
+    return config;
+  });
+};
+
+export default withAndroidPlugin;
+```
+
+Then, in your `app.config.js`, include the plugin with the rest of your config
+and the iOS `Info.plist` changes:
 
 ```js
 export default {
@@ -79,20 +135,37 @@ export default {
     },
     ...
   },
-  android: {
-    query: [
-      { scheme: "msauthv2" },
-      { scheme: "onepassword" },
-      { scheme: "lastpass" },
-      { scheme: "dashlane" },
-      { scheme: "authy" },
-    ],
-    ...
-  },
+  plugins: ["./plugins/withAndroidPlugin", ...],
 };
 ```
 
 # Usage
+
+> **_NOTE:_** React Native does not allow you to open modals from outside the
+render tree. To properly support the manager picker on Android, use the
+`useOtpManager` hook.
+
+```
+import { useOtpManager } from "react-native-otp-auth-link";
+
+const { openManager, pickerData, hidePicker } = useOtpManager();
+
+return (
+  <View>
+    <Button onPress={() => openManager('otpauth://...')} />
+    {pickerData && (
+      <ManagerPicker
+        url={pickerData.url}
+        managers={pickerData.managers}
+        visible={true}
+        onClose={hidePicker}
+      />
+    )}
+  </View>
+);
+```
+
+Otherwise, you can use the `openOtpManager` function directly.
 
 ```tsx
 import { openOtpManager } from "react-native-otp-auth-link";
@@ -102,9 +175,6 @@ const url =
 
 await openOtpManager(url);
 ```
-
-- On iOS: if multiple managers are available, an ActionSheet is shown.
-- On Android: the system chooser handles the `otpauth://` link.
 
 # Contributing
 Contributions are welcome! Please open an issue or submit a pull request.

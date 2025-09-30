@@ -1,7 +1,17 @@
 import React from "react";
 import { ActionSheetIOS, Linking, Platform } from "react-native";
 import { getAvailableManagers, Options, OtpManager } from "./managers";
-import { ManagerPicker } from "./ManagerPicker";
+
+export class AndroidPickerResult extends Error {
+  constructor(
+    public type: 'picker',
+    public url: string,
+    public managers: OtpManager[]
+  ) {
+    super('Android picker required');
+    this.name = 'AndroidPickerResult';
+  }
+}
 
 /**
  * Opens an OTP (one-time password) manager app with the provided `otpauth://` URL.
@@ -47,28 +57,9 @@ export async function openOtpManager(url: string, opts?: Options) {
       return;
     }
 
-    // Show a modal to pick a manager
-    return new Promise<void>((resolve) => {
-      const ModalWrapper = () => {
-        const [visible, setVisible] = React.useState(true);
-        const Component = opts?.renderAndroidPicker ?? ManagerPicker;
-
-        return (
-          <Component
-            url={url}
-            managers={available}
-            visible={visible}
-            onClose={() => {
-              setVisible(false);
-              resolve();
-            }}
-          />
-        );
-      };
-
-      const { AppRegistry } = require("react-native");
-      AppRegistry.registerComponent("OtpManagerPickerModal", () => ModalWrapper);
-    });
+    // For Android, we need to return the picker data instead of trying to render a modal
+    // The calling component should handle the modal rendering
+    throw new AndroidPickerResult('picker', url, available);
   }
 
   // iOS
@@ -100,4 +91,58 @@ export async function openOtpManager(url: string, opts?: Options) {
         }
       });
   });
+}
+
+/**
+ * Hook for handling OTP manager selection on Android.
+ * Use this in your React components to properly handle the modal.
+ *
+ * @example
+ * ```tsx
+ * const { openManager, pickerData, hidePicker } = useOtpManager();
+ *
+ * return (
+ *   <View>
+ *     <Button onPress={() => openManager('otpauth://...')} />
+ *     {pickerData && (
+ *       <ManagerPicker
+ *         url={pickerData.url}
+ *         managers={pickerData.managers}
+ *         visible={true}
+ *         onClose={hidePicker}
+ *       />
+ *     )}
+ *   </View>
+ * );
+ * ```
+ */
+export function useOtpManager() {
+  const [pickerData, setPickerData] = React.useState<{ url: string; managers: OtpManager[] } | null>(null);
+
+  const openManager = async (url: string, opts?: Options) => {
+    try {
+      await openOtpManager(url, opts);
+    } catch (result: unknown) {
+      if (result instanceof AndroidPickerResult) {
+        setPickerData({ url: result.url, managers: result.managers });
+      } else {
+        throw result;
+      }
+    }
+  };
+
+  const showPicker = (url: string, managers: OtpManager[]) => {
+    setPickerData({ url, managers });
+  };
+
+  const hidePicker = () => {
+    setPickerData(null);
+  };
+
+  return {
+    openManager,
+    showPicker,
+    pickerData,
+    hidePicker,
+  };
 }

@@ -1,4 +1,4 @@
-import { Linking } from "react-native";
+import { Linking, Platform } from "react-native";
 
 export type OtpManager = {
   name: string;
@@ -38,5 +38,11 @@ export async function getAvailableManagers(opts?: Options): Promise<OtpManager[]
       ok: await Linking.canOpenURL(m.schemeProbe).catch(() => false),
     }))
   );
-  return checks.filter((c) => c.ok).map((c) => c.m);
+  return checks.filter((c) => c.ok).map((c) => {
+    // Show "Google Authenticator" instead of "Passwords" on Android
+    if (Platform.OS === 'android' && c.m.name === 'Passwords') {
+      return { ...c.m, name: 'Google Authenticator' };
+    }
+    return c.m;
+  });
 }
