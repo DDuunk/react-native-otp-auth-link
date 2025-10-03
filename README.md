@@ -93,7 +93,7 @@ import { withAndroidManifest, ConfigPlugin } from "expo/config-plugins";
 const withAndroidPlugin: ConfigPlugin = (config) => {
   return withAndroidManifest(config, (config) => {
     const schemes = [
-      "msauthenticator",
+      "msauthv2",
       "onepassword",
       "lastpass",
       "dashlane",
